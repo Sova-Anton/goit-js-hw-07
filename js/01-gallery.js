@@ -31,33 +31,22 @@ function onItemsGalleryClick(e) {
   if (!e.target.classList.contains("gallery__image")) {
     return;
   }
-  const instance = basicLightbox.create(`
+  const instance = basicLightbox.create(
+    `
     <img src="${e.target.dataset.source}">   
-`);
-  instance.show();
-// Закрытие через кнопку Close    
-  document.addEventListener(
-    "keydown",
-    function (e) {
-      if (e.key === "Escape") {
-        instance.close();
-      }
-    },
-    { once: true }
+`,
+    {
+      onShow: (instance) =>
+        window.addEventListener("keydown", closeModalEscape),
+      onClose: (instance) =>
+        window.removeEventListener("keydown", closeModalEscape),
+    }
   );
-}
+  instance.show();
 
-// const renderItems = (galleryItems) =>
-//   galleryItems.reduce(
-//     (acc, { preview, original, description }) =>
-//       acc +
-//       `<a class="gallery__link" href="${original}">
-//     <img
-//       class="gallery__image"
-//       src="${preview}"
-//       data-source="${original}"
-//       alt="${description}"
-//     />
-//   </a>`,
-//     ""
-//   );
+  function closeModalEscape(e) {
+    if (e.key === "Escape") {
+      instance.close();
+    }
+  }
+}
